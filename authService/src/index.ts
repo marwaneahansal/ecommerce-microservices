@@ -1,25 +1,19 @@
 import { Request, Response } from "express";
 import express from 'express';
 import cors from 'cors';
-import proxy from 'express-http-proxy';
 import env from 'dotenv';
 
 env.config();
-
 const app = express();
 
 app.use(cors());
 app.use(express.json());
 
-
-app.use('/auth', proxy('http://auth:3001'));
-
 app.get('/', (req: Request, res: Response) => {
-  res.send('Hello world!');
+  res.send('Welcome to the Auth Service!');
 });
 
-const PORT = process.env.PORT || 3000;
-
+const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
-  console.log('Listening on port ' + PORT);
+  console.log('Listening on port: ' +  PORT);
 });

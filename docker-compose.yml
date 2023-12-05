@@ -21,3 +21,19 @@ services:
       volumes:
         - ./gateway:/app/
         - /app/node_modules
+  auth:
+      build: 
+        context: ./authService
+        dockerfile: Dockerfile
+      container_name: authService
+      ports:
+        - '3001:3001'
+      depends_on:
+        - rabbitmq
+        - gateway
+      restart: unless-stopped
+      env_file:
+        - ./authService/.env
+      volumes:
+        - ./authService:/app/
+        - /app/node_modules
