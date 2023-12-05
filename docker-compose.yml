@@ -1,0 +1,23 @@
+version: '3.1'
+
+services:
+  rabbitmq:
+      image: rabbitmq:alpine
+      container_name: rabbitmq
+      ports:
+        - '5672:5672'
+  gateway:
+      build: 
+        context: ./gateway
+        dockerfile: Dockerfile
+      container_name: gateway
+      ports:
+        - '3000:3000'
+      depends_on:
+        - rabbitmq
+      restart: unless-stopped
+      env_file:
+        - ./gateway/.env
+      volumes:
+        - ./gateway:/app/
+        - /app/node_modules
