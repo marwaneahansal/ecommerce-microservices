@@ -1,11 +1,23 @@
 version: '3.1'
 
 services:
+  db:
+    image: postgres
+    container_name: db
+    restart: unless-stopped
+    environment:
+      POSTGRES_PASSWORD: root
+    ports:
+      - "5432:5432"
+    volumes:
+      - dbdata:/var/lib/postgresql/data
+  
   rabbitmq:
       image: rabbitmq:alpine
       container_name: rabbitmq
       ports:
         - '5672:5672'
+    
   gateway:
       build: 
         context: ./gateway
@@ -21,6 +33,7 @@ services:
       volumes:
         - ./gateway:/app/
         - /app/node_modules
+    
   auth:
       build: 
         context: ./authService
@@ -28,7 +41,9 @@ services:
       container_name: authService
       ports:
         - '3001:3001'
+        - '5555:5555'
       depends_on:
+        - db
         - rabbitmq
         - gateway
       restart: unless-stopped
@@ -37,3 +52,7 @@ services:
       volumes:
         - ./authService:/app/
         - /app/node_modules
+
+
+volumes:
+  dbdata:
