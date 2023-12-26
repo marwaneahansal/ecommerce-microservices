@@ -51,8 +51,9 @@ services:
         - ./authService/.env
       volumes:
         - ./authService:/app/
-        - /app/node_modules
+        - notused:/app/node_modules
 
 
 volumes:
   dbdata:
+  notused:
