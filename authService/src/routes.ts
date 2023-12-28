@@ -1,5 +1,5 @@
 import express from 'express';
-import { registerUser, loginUser } from './controllers/auth.controller';
+import { registerUser, loginUser, refreshToken } from './controllers/auth.controller';
 import { authenticate } from './middlewares/authenticate.middleware';
 
 const router = express.Router();
@@ -11,6 +11,7 @@ router.get('/', (req, res) => {
 
 router.post('/register', registerUser);
 router.post('/login', loginUser);
+router.post('/refresh-token', refreshToken);
 
 router.get('/me',  authenticate, (req, res) => {
   res.json(req.currentUser);

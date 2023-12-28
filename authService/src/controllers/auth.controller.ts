@@ -1,5 +1,7 @@
 import { Request, Response } from "express";
-import { comparePassword, createUser, findUserByEmail, generateAccessToken } from "../services/auth.service";
+import { comparePassword, createUser, destroyRefreshToken, findUserByEmail,
+        findUserByToken,
+        generateAccessToken, generateRefreshToken, verifyRefreshExpiration } from "../services/auth.service";
 
 const registerUser = async (req: Request, res: Response) => {
     try {
@@ -29,14 +31,42 @@ const loginUser = async (req: Request, res: Response) => {
         }
         
         const accessToken = await generateAccessToken(existingUser);
+        const refreshToken = await generateRefreshToken(existingUser);
         res.status(200)
+            .cookie('refreshToken', refreshToken, {
+                httpOnly: true,
+                sameSite: 'strict',
+            })
             .header('Authorization', accessToken)
             .json({ message: "User logged in successfully" });
     } catch (error) {
         console.log(`Error:  ${error}`);
         res.status(500).json({ message: "Internal server error during user login" });
     }
-
 };
 
-export { registerUser, loginUser };
+const refreshToken = async (req: Request, res: Response) => {
+    const { refreshToken } = req.cookies;
+    if (!refreshToken) {
+        return res.status(403).json({ message: "Access denied, token missing!" });
+    }
+    try {
+        if (await verifyRefreshExpiration(refreshToken)) {
+            await destroyRefreshToken(refreshToken);
+            return res.status(403).json({ message: "Access denied, token expired!" });
+        }
+        const existingUser = await findUserByToken(refreshToken);
+        if (!existingUser) {
+            return res.status(404).json({ message: "User not found" });
+        }
+        const accessToken = await generateAccessToken(existingUser);
+        res.status(200)
+            .header('Authorization', accessToken)
+            .json({ message: "Token refreshed successfully" });
+    } catch (error) {
+        console.log(`Error:  ${error}`);
+        res.status(500).json({ message: "Internal server error during token refresh" });
+    }
+};
+
+export { registerUser, loginUser, refreshToken };

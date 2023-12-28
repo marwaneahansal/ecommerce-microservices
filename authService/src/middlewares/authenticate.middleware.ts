@@ -5,7 +5,7 @@ import { User } from "@prisma/client";
 declare global {
     namespace Express {
         interface Request {
-            currentUser?: User;
+            currentUser?: Omit<User, "password">;
         }
     }
 }
@@ -16,7 +16,7 @@ const authenticate = async (req: Request, res: Response, next: NextFunction) => 
         if (!accessToken) {
             return res.status(403).json({ message: "Access denied, token missing!" });
         }
-        const existingUser = await findUserByToken(accessToken!);
+        const existingUser = await findUserByToken(accessToken);
         if (!existingUser) {
             return res.status(404).json({ message: "User not found" });
         }

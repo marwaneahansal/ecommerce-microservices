@@ -4,6 +4,8 @@ declare global {
         PORT?: string;
         DATABASE_URL: string;
         JWT_SECRET: string;
+        JWT_ACCESS_EXPIRATION: string;
+        JWT_REFRESH_EXPIRATION: string;
       }
     }
   }
