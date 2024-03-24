@@ -1,8 +1,6 @@
-FROM node:slim
+FROM node:20-alpine3.18
 
 WORKDIR /app
-
-RUN apt-get update && apt-get upgrade openssl -y
 
 COPY prisma ./prisma/
 

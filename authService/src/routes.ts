@@ -5,7 +5,7 @@ import { authenticate } from './middlewares/authenticate.middleware';
 const router = express.Router();
 
 
-router.get('/', (req, res) => {
+router.get('/', (_, res) => {
   res.json({ message: 'Hello World from auth' });
 });
 
