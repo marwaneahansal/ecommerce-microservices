@@ -52,8 +52,24 @@ services:
       volumes:
         - ./authService:/app/
         - /app/node_modules
-        # - ./authService/node_modules:/app/node_modules
 
+  products:
+      build: 
+        context: ./productsService
+        dockerfile: Dockerfile
+      container_name: productsService
+      ports:
+        - '3002:3002'
+      depends_on:
+        - db
+        - rabbitmq
+        - gateway
+      restart: unless-stopped
+      env_file:
+        - ./productsService/.env
+      volumes:
+        - ./productsService:/app/
+        - /app/node_modules
 
 volumes:
   dbdata:
