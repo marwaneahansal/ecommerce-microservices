@@ -9,7 +9,7 @@ COPY package-lock.json .
 
 RUN npm install
 
-# RUN npx prisma db pull && npx prisma generate
+# ENTRYPOINT [ "./entrypoint.sh" ]
 
 COPY . .
 

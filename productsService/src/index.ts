@@ -1,7 +1,8 @@
-import express from 'express';
-import cors from 'cors';
-import env from 'dotenv';
-import { PrismaClient } from '@prisma/client';
+import express from "express";
+import cors from "cors";
+import env from "dotenv";
+import { PrismaClient } from "@prisma/client";
+import { router } from "./routes";
 
 env.config();
 
@@ -12,15 +13,10 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.get('/', async (req, res) => {
-    const users = await prisma.user.findMany();
-    res.json(users).status(200);
-});
+app.use(router);
 
 const PORT = process.env.PORT || 3002;
 
 app.listen(PORT, () => {
-  console.log('Listening on port: ' +  PORT);
+  console.log("Listening on port: " + PORT);
 });
-
-

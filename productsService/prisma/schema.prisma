@@ -7,22 +7,42 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Session {
-  id           String   @id
-  userId       String
-  expiresAt    DateTime
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime
-  sessionToken String   @unique
-  User         User     @relation(fields: [userId], references: [id])
-}
-
 model User {
-  id        String    @id
+  id        String    @id @default(uuid())
   email     String    @unique
   name      String?
   password  String
   createdAt DateTime  @default(now())
-  updatedAt DateTime
-  Session   Session[]
+  updatedAt DateTime  @updatedAt
+  sessions  Session[]
+}
+
+model Session {
+  id           String   @id @default(uuid())
+  userId       String
+  expiresAt    DateTime
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  sessionToken String   @unique
+  user         User     @relation(fields: [userId], references: [id])
+}
+
+model Category {
+  id        String    @id @default(uuid())
+  name      String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  products  Product[]
+}
+
+model Product {
+  id          String   @id @default(uuid())
+  name        String
+  image       String?
+  description String
+  price       Float
+  categoryId  String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  category    Category @relation(fields: [categoryId], references: [id])
 }
