@@ -9,10 +9,10 @@ COPY package-lock.json .
 
 RUN npm install
 
-# ENTRYPOINT [ "./entrypoint.sh" ]
-
 COPY . .
 
-EXPOSE 3001
+EXPOSE 3002
+
+ENTRYPOINT [ "./entrypoint.sh" ]
 
 CMD ["npm", "run", "dev"]
