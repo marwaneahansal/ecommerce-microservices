@@ -4,6 +4,7 @@ import env from "dotenv";
 import { router } from "./routes";
 import cookieParser from "cookie-parser";
 import amqp from "amqplib";
+import { isAuthenticated } from "./utils/isAuthenticated";
 
 let channel;
 
@@ -17,13 +18,18 @@ const amqpConnect = async () => {
 env.config();
 
 amqpConnect().then((channel) => {
-  // Consume messages from the queue
-  channel.consume("auth", (message) => {
+  channel.consume("auth", async (message) => {
     if (message) {
-      console.log("Message recieved: ", message);
       const data = JSON.parse(message.content.toString());
-      console.log("Data recieved: ", data);
       channel.ack(message);
+      if (data.message === "IsAuthenticated") {
+        const resData = {
+          isAuthenticated: false,
+          consumer: data.consumer,
+        };
+        resData.isAuthenticated = await isAuthenticated(data.token);
+        channel.sendToQueue(data.consumer, Buffer.from(JSON.stringify(resData)));
+      }
     }
   });
 });
