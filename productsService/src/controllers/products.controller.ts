@@ -1,9 +1,17 @@
 import type { Request, Response } from "express";
 import { createNewProduct, getAllProducts } from "../services/products.service";
 import { getCategoryById } from "../services/categories.service";
+import { amqpConnect } from "../utils/amqp";
 
 const getProducts = async (req: Request, res: Response) => {
   try {
+    const data = {
+      message: "IsAuthenticated",
+      token: req.headers.authorization,
+      consumer: "products",
+    };
+    const channel = await amqpConnect();
+    channel.sendToQueue("auth", Buffer.from(JSON.stringify(data)));
     const products = await getAllProducts();
     res.json({
       status: true,
@@ -14,7 +22,6 @@ const getProducts = async (req: Request, res: Response) => {
     console.log(`* Error: ${ex}`);
     res.status(500).json({ message: "Internal server error" });
   }
-  res.json({ message: "Getting products" });
 };
 
 const createProducts = async (req: Request, res: Response) => {

@@ -2,7 +2,7 @@
   "name": "authservice",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "index.ts",
   "scripts": {
     "dev": "ts-node-dev --respawn --transpile-only --exit-child ./src/index.ts",
     "build": "tsc"
@@ -11,6 +11,7 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@types/amqplib": "^0.10.5",
     "@types/bcrypt": "^5.0.2",
     "@types/cookie-parser": "^1.4.6",
     "@types/cors": "^2.8.17",
@@ -22,6 +23,7 @@
   },
   "dependencies": {
     "@prisma/client": "^5.6.0",
+    "amqplib": "^0.10.3",
     "bcrypt": "^5.1.1",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
