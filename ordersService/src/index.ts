@@ -1,6 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import env from 'dotenv';
+import { router } from './routes';
 
 env.config();
 
@@ -10,9 +11,7 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.get('/', async (req, res) => {
-    res.json({ message: 'Orders Service' });
-});
+app.use(router);
 
 const PORT = process.env.PORT || 3003;
 
