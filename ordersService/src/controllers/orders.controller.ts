@@ -3,7 +3,7 @@ import { createNewOrder, getAllOrders } from "../services/ordres.services";
 
 const getOrders = async (req: Request, res: Response) : Promise<Response> => {
   try {
-    const orders = await getAllOrders();
+    const orders = await getAllOrders(req.currentUser!.id);
     if (!orders) {
       return res.status(500).json({ message: "Internal Server Error" });
     }
@@ -22,7 +22,7 @@ const createOrder = async (req: Request, res: Response) : Promise<Response> => {
   try {
     const { products } = req.body;
     // TODO: check for products ids
-    const order = await createNewOrder(products);
+    const order = await createNewOrder(products, req.currentUser!.id);
     if (!order) {
       return res.status(500).json({ message: "Internal Server Error" });
     }

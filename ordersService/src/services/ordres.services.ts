@@ -7,9 +7,12 @@ type Product = {
   quantity: number;
 };
 
-const getAllOrders = async () : Promise<Order[] | null> => {
+const getAllOrders = async (userId: string) : Promise<Order[] | null> => {
   try {
     const orders = await prisma.order.findMany({
+      where: {
+        userId: userId,
+      },
       include: {
         items: {
           include: {
@@ -25,19 +28,15 @@ const getAllOrders = async () : Promise<Order[] | null> => {
   }
 }
 
-const createNewOrder = async (products: Product[]) : Promise<Order | null> => {
+const createNewOrder = async (products: Product[], userId: string) : Promise<Order | null> => {
   try {
-    // * for now get the first user found
-    const user = await prisma.user.findFirst();
-    if (!user) throw new Error("User not found");
     const productsRecord = products.map((product) => ({
       productId: product.id,
       quantity: product.quantity,
-      // price: 0, // * for now price is 0
     }));
     const order = await prisma.order.create({
       data: {
-        userId: user.id,
+        userId: userId,
         status: "PENDING",
         total: 0, // * for now total is 0
         items: {

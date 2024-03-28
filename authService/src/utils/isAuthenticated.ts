@@ -1,17 +1,23 @@
+import { User } from "@prisma/client";
 import { findUserByToken } from "../services/auth.service";
 
-const isAuthenticated = async (accessToken: string): Promise<boolean> => {
+const isAuthenticated = async (
+  accessToken: string
+): Promise<{
+  isAuthenticated: boolean;
+  user: Omit<User, "password"> | undefined;
+}> => {
   try {
     if (!accessToken) {
-      return false;
+      return { isAuthenticated: false, user: undefined };
     }
     const user = await findUserByToken(accessToken);
-    if (!user) return false;
-    return true;
+    if (!user) return { isAuthenticated: false, user: undefined };
+    return { isAuthenticated: true, user: user };
   } catch (error) {
     console.log(`Error:  ${error}`);
-    return false;
+    return { isAuthenticated: false, user: undefined };
   }
 };
 
-export { isAuthenticated }
+export { isAuthenticated };

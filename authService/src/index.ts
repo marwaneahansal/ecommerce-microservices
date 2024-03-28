@@ -25,11 +25,7 @@ amqpConnect().then(async (channel) => {
     if (message) {
       const data = JSON.parse(message.content.toString());
       if (data.message === "IsAuthenticated") {
-        const resData = {
-          isAuthenticated: false,
-          consumer: data.consumer,
-        };
-        resData.isAuthenticated = await isAuthenticated(data.token);
+        const resData = await isAuthenticated(data.token);
         channel.sendToQueue(
           message.properties.replyTo,
           Buffer.from(JSON.stringify(resData)),
