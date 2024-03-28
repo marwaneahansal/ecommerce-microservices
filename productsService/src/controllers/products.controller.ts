@@ -10,7 +10,7 @@ const getProducts = async (req: Request, res: Response) => {
       token: req.headers.authorization,
       consumer: "products",
     };
-    const channel = await amqpConnect();
+    const { channel } = await amqpConnect();
     channel.sendToQueue("auth", Buffer.from(JSON.stringify(data)));
     const products = await getAllProducts();
     res.json({

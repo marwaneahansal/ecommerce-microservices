@@ -11,24 +11,33 @@ let channel;
 const amqpConnect = async () => {
   const connection = await amqp.connect(process.env.AMQP_URL);
   channel = await connection.createChannel();
-  await channel.assertQueue("auth");
+  await channel.assertQueue("auth", {
+    durable: false,
+  });
+  channel.prefetch(1);
   return channel;
 };
 
 env.config();
 
-amqpConnect().then((channel) => {
-  channel.consume("auth", async (message) => {
+amqpConnect().then(async (channel) => {
+  await channel.consume("auth", async (message) => {
     if (message) {
       const data = JSON.parse(message.content.toString());
-      channel.ack(message);
       if (data.message === "IsAuthenticated") {
         const resData = {
           isAuthenticated: false,
           consumer: data.consumer,
         };
         resData.isAuthenticated = await isAuthenticated(data.token);
-        channel.sendToQueue(data.consumer, Buffer.from(JSON.stringify(resData)));
+        channel.sendToQueue(
+          message.properties.replyTo,
+          Buffer.from(JSON.stringify(resData)),
+          {
+            correlationId: message.properties.correlationId,
+          }
+        );
+        channel.ack(message);
       }
     }
   });
