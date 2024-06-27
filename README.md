@@ -1,5 +1,11 @@
-# KITCHENO
+# E-Commerce Microservices API
 
-## Description
+This is an e-commerce microservices API using Express.js, TypeScript, and RabbitMQ for efficient data exchange.
 
-This is a website that allows users to order food online and get it delivered to their location.
+## Usage
+
+To run the app, clone the repository and run the following commands:
+
+```bash
+docker compose up
+```
